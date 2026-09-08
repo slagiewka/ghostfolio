@@ -305,10 +305,9 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "options": {
-        "jestConfig": "apps/client/jest.config.ts",
-        "tsConfig": "apps/client/tsconfig.spec.json"
+        "configFile": "apps/client/vitest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/client"]
     }

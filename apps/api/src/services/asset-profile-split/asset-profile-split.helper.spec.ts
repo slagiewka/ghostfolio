@@ -60,7 +60,7 @@ describe('adjustActivityBySplits', () => {
   });
 
   it('compares stored UTC split dates without normalizing them locally', () => {
-    const resetHoursSpy = jest
+    const resetHoursSpy = vi
       .spyOn(commonHelper, 'resetHours')
       .mockReturnValue(new Date('2024-06-14T00:00:00Z'));
 

@@ -16,28 +16,28 @@ import { parseDate } from '@ghostfolio/common/helper';
 import { Activity } from '@ghostfolio/common/interfaces';
 import { PerformanceCalculationType } from '@ghostfolio/common/types/performance-calculation-type.type';
 
-jest.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
+vi.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
   return {
-    CurrentRateService: jest.fn().mockImplementation(() => {
+    CurrentRateService: vi.fn().mockImplementation(function () {
       return CurrentRateServiceMock;
     })
   };
 });
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/queues/portfolio-snapshot/portfolio-snapshot.service',
   () => {
     return {
-      PortfolioSnapshotService: jest.fn().mockImplementation(() => {
+      PortfolioSnapshotService: vi.fn().mockImplementation(function () {
         return PortfolioSnapshotServiceMock;
       })
     };
   }
 );
 
-jest.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
+vi.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
   return {
-    RedisCacheService: jest.fn().mockImplementation(() => {
+    RedisCacheService: vi.fn().mockImplementation(function () {
       return RedisCacheServiceMock;
     })
   };
@@ -81,7 +81,7 @@ describe('PortfolioCalculator', () => {
 
   describe('get current positions', () => {
     it('with BTCUSD buy before the first known market price', async () => {
-      jest.useFakeTimers().setSystemTime(parseDate('2022-01-14').getTime());
+      vi.useFakeTimers().setSystemTime(parseDate('2022-01-14').getTime());
 
       const activities: Activity[] = [
         {

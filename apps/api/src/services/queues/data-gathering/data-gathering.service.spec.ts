@@ -4,24 +4,26 @@ import {
 } from '@ghostfolio/common/config';
 import { parseDate } from '@ghostfolio/common/helper';
 
+import type { Mock } from 'vitest';
+
 import { DataGatheringService } from './data-gathering.service';
 
 describe('DataGatheringService', () => {
-  let dataGatheringQueue: { addBulk: jest.Mock; clean: jest.Mock };
+  let dataGatheringQueue: { addBulk: Mock; clean: Mock };
   let dataGatheringService: DataGatheringService;
-  let dataProviderService: { getHistoricalRaw: jest.Mock };
-  let prismaService: { marketData: { groupBy: jest.Mock; upsert: jest.Mock } };
+  let dataProviderService: { getHistoricalRaw: Mock };
+  let prismaService: { marketData: { groupBy: Mock; upsert: Mock } };
 
   beforeEach(() => {
     dataGatheringQueue = {
-      addBulk: jest.fn().mockResolvedValue([]),
-      clean: jest.fn().mockResolvedValue([])
+      addBulk: vi.fn().mockResolvedValue([]),
+      clean: vi.fn().mockResolvedValue([])
     };
-    dataProviderService = { getHistoricalRaw: jest.fn() };
+    dataProviderService = { getHistoricalRaw: vi.fn() };
     prismaService = {
       marketData: {
-        groupBy: jest.fn().mockResolvedValue([]),
-        upsert: jest.fn().mockResolvedValue({})
+        groupBy: vi.fn().mockResolvedValue([]),
+        upsert: vi.fn().mockResolvedValue({})
       }
     };
 
@@ -38,12 +40,12 @@ describe('DataGatheringService', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('getAssetProfileIdentifiersWithRecentMarketData', () => {
     it('queries real market prices since the start of yesterday (UTC)', async () => {
-      jest.useFakeTimers().setSystemTime(new Date('2026-08-24T14:00:00.000Z'));
+      vi.useFakeTimers().setSystemTime(new Date('2026-08-24T14:00:00.000Z'));
 
       await dataGatheringService[
         'getAssetProfileIdentifiersWithRecentMarketData'
@@ -61,7 +63,7 @@ describe('DataGatheringService', () => {
     });
 
     it('includes the Friday close when it runs on Saturday', async () => {
-      jest.useFakeTimers().setSystemTime(new Date('2026-08-22T14:00:00.000Z'));
+      vi.useFakeTimers().setSystemTime(new Date('2026-08-22T14:00:00.000Z'));
 
       await dataGatheringService[
         'getAssetProfileIdentifiersWithRecentMarketData'
@@ -77,7 +79,7 @@ describe('DataGatheringService', () => {
     });
 
     it('excludes the Friday close when it runs on Sunday', async () => {
-      jest.useFakeTimers().setSystemTime(new Date('2026-08-23T14:00:00.000Z'));
+      vi.useFakeTimers().setSystemTime(new Date('2026-08-23T14:00:00.000Z'));
 
       await dataGatheringService[
         'getAssetProfileIdentifiersWithRecentMarketData'
@@ -120,10 +122,10 @@ describe('DataGatheringService', () => {
         assetProfileIdentifiersWithRecentMarketData
       );
 
-      const getCurrencies7D = jest
+      const getCurrencies7D = vi
         .spyOn(dataGatheringService as any, 'getCurrencies7D')
         .mockReturnValue([]);
-      const getSymbols7D = jest
+      const getSymbols7D = vi
         .spyOn(dataGatheringService as any, 'getSymbols7D')
         .mockResolvedValue([]);
 
@@ -147,12 +149,12 @@ describe('DataGatheringService', () => {
     });
 
     it('expires completed jobs which are older than the cooldown', async () => {
-      jest
-        .spyOn(dataGatheringService as any, 'getCurrencies7D')
-        .mockReturnValue([]);
-      jest
-        .spyOn(dataGatheringService as any, 'getSymbols7D')
-        .mockResolvedValue([]);
+      vi.spyOn(dataGatheringService as any, 'getCurrencies7D').mockReturnValue(
+        []
+      );
+      vi.spyOn(dataGatheringService as any, 'getSymbols7D').mockResolvedValue(
+        []
+      );
 
       await dataGatheringService.gatherRecentMarketData();
 
@@ -163,18 +165,16 @@ describe('DataGatheringService', () => {
     });
 
     it('retains its completed jobs for the duration of the cooldown', async () => {
-      jest
-        .spyOn(dataGatheringService as any, 'getCurrencies7D')
-        .mockReturnValue([
-          {
-            dataSource: 'YAHOO',
-            date: parseDate('2026-08-01'),
-            symbol: 'AAPL'
-          }
-        ]);
-      jest
-        .spyOn(dataGatheringService as any, 'getSymbols7D')
-        .mockResolvedValue([]);
+      vi.spyOn(dataGatheringService as any, 'getCurrencies7D').mockReturnValue([
+        {
+          dataSource: 'YAHOO',
+          date: parseDate('2026-08-01'),
+          symbol: 'AAPL'
+        }
+      ]);
+      vi.spyOn(dataGatheringService as any, 'getSymbols7D').mockResolvedValue(
+        []
+      );
 
       await dataGatheringService.gatherRecentMarketData();
 

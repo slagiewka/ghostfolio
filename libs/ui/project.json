@@ -12,11 +12,10 @@
   },
   "targets": {
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/libs/ui"],
       "options": {
-        "jestConfig": "libs/ui/jest.config.ts",
-        "tsConfig": "libs/ui/tsconfig.spec.json"
+        "configFile": "libs/ui/vitest.config.ts"
       }
     },
     "lint": {

@@ -4,8 +4,9 @@
     "outDir": "../../dist/out-tsc",
     "module": "preserve",
     "isolatedModules": true,
-    "types": ["jest", "node"]
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
+    "types": ["vitest/globals", "node"]
   },
   "files": ["src/test-setup.ts"],
-  "include": ["**/*.spec.ts", "**/*.test.ts", "**/*.d.ts", "jest.config.ts"]
+  "include": ["**/*.spec.ts", "**/*.test.ts", "**/*.d.ts", "vitest.config.ts"]
 }

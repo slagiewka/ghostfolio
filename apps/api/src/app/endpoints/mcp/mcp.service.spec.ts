@@ -32,7 +32,7 @@ describe('McpService', () => {
   let userService: UserService;
 
   function setupUser(userPermissions: string[]) {
-    jest.spyOn(userService, 'user').mockResolvedValue({
+    vi.spyOn(userService, 'user').mockResolvedValue({
       permissions: userPermissions
     } as UserWithSettings);
   }
@@ -44,26 +44,26 @@ describe('McpService', () => {
     };
 
     configurationService = {
-      get: jest.fn().mockImplementation((key: string) => {
+      get: vi.fn().mockImplementation((key: string) => {
         return configuration[key];
       })
     } as unknown as ConfigurationService;
 
     apiService = {
-      buildFiltersFromQueryParams: jest.fn().mockReturnValue(filters)
+      buildFiltersFromQueryParams: vi.fn().mockReturnValue(filters)
     } as unknown as ApiService;
 
     importService = {
-      import: jest.fn().mockResolvedValue([])
+      import: vi.fn().mockResolvedValue([])
     } as unknown as ImportService;
 
     portfolioTableService = {
-      getAccountsTable: jest.fn().mockResolvedValue('## Accounts'),
-      getActivitiesTable: jest.fn().mockResolvedValue('## Activities'),
-      getHoldingsTable: jest.fn().mockResolvedValue('## Holdings')
+      getAccountsTable: vi.fn().mockResolvedValue('## Accounts'),
+      getActivitiesTable: vi.fn().mockResolvedValue('## Activities'),
+      getHoldingsTable: vi.fn().mockResolvedValue('## Holdings')
     } as unknown as PortfolioTableService;
 
-    userService = { user: jest.fn() } as unknown as UserService;
+    userService = { user: vi.fn() } as unknown as UserService;
 
     mcpService = new McpService(
       apiService,
@@ -75,7 +75,7 @@ describe('McpService', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('getAccounts', () => {
@@ -199,9 +199,9 @@ describe('McpService', () => {
     it('Gives the number of the imported and of the skipped activities', async () => {
       setupUser([permissions.createActivity]);
 
-      jest
-        .spyOn(importService, 'import')
-        .mockResolvedValue([{ id: 'activity-id' } as Activity]);
+      vi.spyOn(importService, 'import').mockResolvedValue([
+        { id: 'activity-id' } as Activity
+      ]);
 
       expect(
         await mcpService.importActivities({
@@ -266,7 +266,7 @@ describe('McpService', () => {
         'activities.0.symbol ("X") is not valid'
       );
 
-      jest.spyOn(importService, 'import').mockRejectedValue(error);
+      vi.spyOn(importService, 'import').mockRejectedValue(error);
 
       await expect(
         mcpService.importActivities({

@@ -1,26 +1,25 @@
-/**
- * @jest-environment <rootDir>/jest-environment-tz.js
- * @jest-environment-options {"timeZone": "America/New_York"}
- */
 import { DataGatheringItem } from '@ghostfolio/api/services/interfaces/interfaces';
 
 import { Job } from 'bull';
+import type { Mock } from 'vitest';
 
 import { DataGatheringProcessor } from './data-gathering.processor';
 
 describe('DataGatheringProcessor in a time zone behind UTC', () => {
   let dataGatheringProcessor: DataGatheringProcessor;
-  let dataProviderService: { getHistoricalRaw: jest.Mock };
-  let marketDataService: { replaceForSymbol: jest.Mock; updateMany: jest.Mock };
+  let dataProviderService: { getHistoricalRaw: Mock };
+  let marketDataService: { replaceForSymbol: Mock; updateMany: Mock };
+  const previousTimeZone = process.env.TZ;
 
   beforeAll(() => {
+    process.env.TZ = 'America/New_York';
     // 2026-08-23 21:30 in New York, but already 2026-08-24 in UTC
-    jest.useFakeTimers().setSystemTime(new Date('2026-08-24T01:30:00.000Z'));
+    vi.useFakeTimers().setSystemTime(new Date('2026-08-24T01:30:00.000Z'));
   });
 
   beforeEach(() => {
     dataProviderService = {
-      getHistoricalRaw: jest.fn().mockResolvedValue({
+      getHistoricalRaw: vi.fn().mockResolvedValue({
         'COINGECKO-bitcoin': {
           '2026-08-21': { marketPrice: 5 },
           '2026-08-22': { marketPrice: 6 },
@@ -29,8 +28,8 @@ describe('DataGatheringProcessor in a time zone behind UTC', () => {
       })
     };
     marketDataService = {
-      replaceForSymbol: jest.fn(),
-      updateMany: jest.fn()
+      replaceForSymbol: vi.fn(),
+      updateMany: vi.fn()
     };
 
     dataGatheringProcessor = new DataGatheringProcessor(
@@ -42,7 +41,12 @@ describe('DataGatheringProcessor in a time zone behind UTC', () => {
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    if (previousTimeZone === undefined) {
+      delete process.env.TZ;
+    } else {
+      process.env.TZ = previousTimeZone;
+    }
+    vi.useRealTimers();
   });
 
   it('gathers up to the last complete UTC day and does not shift the dates', async () => {

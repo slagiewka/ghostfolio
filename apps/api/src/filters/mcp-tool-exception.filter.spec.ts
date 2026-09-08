@@ -4,12 +4,13 @@ import { PortfolioSnapshotComputationError } from '@ghostfolio/api/app/portfolio
 import { ForbiddenException, Logger } from '@nestjs/common';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { firstValueFrom } from 'rxjs';
+import type { MockInstance } from 'vitest';
 
 import { McpToolExceptionFilter } from './mcp-tool-exception.filter';
 
 describe('McpToolExceptionFilter', () => {
   let filter: McpToolExceptionFilter;
-  let logError: jest.SpyInstance;
+  let logError: MockInstance;
 
   async function getErrorOfException(exception: unknown) {
     try {
@@ -24,11 +25,13 @@ describe('McpToolExceptionFilter', () => {
   beforeEach(() => {
     filter = new McpToolExceptionFilter();
 
-    logError = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    logError = vi
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation(() => undefined);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('Passes on the message of an error which is written for the caller', async () => {

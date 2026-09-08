@@ -6,25 +6,26 @@ import { DataGatheringService } from '@ghostfolio/api/services/queues/data-gathe
 import { NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AssetProfileSplit, DataSource } from '@prisma/client';
+import type { Mock } from 'vitest';
 
 import { AssetProfilesService } from './asset-profiles.service';
 
 describe('AssetProfilesService', () => {
   let assetProfilesService: AssetProfilesService;
-  let deleteById: jest.Mock;
-  let emit: jest.Mock;
-  let finished: jest.Mock;
-  let gatherSymbol: jest.Mock;
-  let getUserIdsBySymbolProfileId: jest.Mock;
-  let upsert: jest.Mock;
+  let deleteById: Mock;
+  let emit: Mock;
+  let finished: Mock;
+  let gatherSymbol: Mock;
+  let getUserIdsBySymbolProfileId: Mock;
+  let upsert: Mock;
 
   beforeEach(() => {
-    deleteById = jest.fn();
-    emit = jest.fn();
-    finished = jest.fn().mockResolvedValue(undefined);
-    gatherSymbol = jest.fn().mockResolvedValue([{ finished }]);
-    getUserIdsBySymbolProfileId = jest.fn().mockResolvedValue([]);
-    upsert = jest.fn();
+    deleteById = vi.fn();
+    emit = vi.fn();
+    finished = vi.fn().mockResolvedValue(undefined);
+    gatherSymbol = vi.fn().mockResolvedValue([{ finished }]);
+    getUserIdsBySymbolProfileId = vi.fn().mockResolvedValue([]);
+    upsert = vi.fn();
 
     assetProfilesService = new AssetProfilesService(
       { getUserIdsBySymbolProfileId } as unknown as ActivitiesService,

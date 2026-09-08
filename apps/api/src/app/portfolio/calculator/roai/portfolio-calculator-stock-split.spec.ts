@@ -20,28 +20,28 @@ import { PerformanceCalculationType } from '@ghostfolio/common/types/performance
 import { AssetProfileSplit, DataSource } from '@prisma/client';
 import { Big } from 'big.js';
 
-jest.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
+vi.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
   return {
-    CurrentRateService: jest.fn().mockImplementation(() => {
+    CurrentRateService: vi.fn().mockImplementation(function () {
       return CurrentRateServiceMock;
     })
   };
 });
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/queues/portfolio-snapshot/portfolio-snapshot.service',
   () => {
     return {
-      PortfolioSnapshotService: jest.fn().mockImplementation(() => {
+      PortfolioSnapshotService: vi.fn().mockImplementation(function () {
         return PortfolioSnapshotServiceMock;
       })
     };
   }
 );
 
-jest.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
+vi.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
   return {
-    RedisCacheService: jest.fn().mockImplementation(() => {
+    RedisCacheService: vi.fn().mockImplementation(function () {
       return RedisCacheServiceMock;
     })
   };
@@ -176,7 +176,7 @@ describe('RoaiPortfolioCalculator stock splits', () => {
   });
 
   it('uses provider market data without adjusting it a second time', async () => {
-    jest.useFakeTimers().setSystemTime(parseDate('2023-07-10').getTime());
+    vi.useFakeTimers().setSystemTime(parseDate('2023-07-10').getTime());
 
     const activity = adjustActivityBySplits(
       createActivity({ date: '2023-07-09', unitPrice: 674.44 }),

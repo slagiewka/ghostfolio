@@ -45,9 +45,9 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "options": {
-        "jestConfig": "apps/api/jest.config.ts"
+        "configFile": "apps/api/vitest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/api"]
     }

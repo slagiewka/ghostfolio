@@ -154,15 +154,15 @@ describe('PortfolioService', () => {
     };
 
     const getAccountsQuery = async (filters?: Filter[]) => {
-      const accountsSpy = jest
+      const accountsSpy = vi
         .spyOn(accountService, 'accounts')
         .mockResolvedValue([]);
 
-      jest.spyOn(portfolioService, 'getDetails').mockResolvedValue({
+      vi.spyOn(portfolioService, 'getDetails').mockResolvedValue({
         accounts: {}
       } as unknown as Awaited<ReturnType<typeof portfolioService.getDetails>>);
 
-      jest.spyOn(userService, 'user').mockResolvedValue(null);
+      vi.spyOn(userService, 'user').mockResolvedValue(null);
 
       await portfolioService.getAccounts({ filters, userId: userDummyData.id });
 
@@ -317,9 +317,10 @@ describe('PortfolioService', () => {
 
   describe('getCashSymbolProfiles', () => {
     it('should use the exchange-rate data source so the symbol-profile join in getDetails matches the calculator positions', () => {
-      jest
-        .spyOn(dataProviderService, 'getDataSourceForExchangeRates')
-        .mockReturnValue(DataSource.YAHOO);
+      vi.spyOn(
+        dataProviderService,
+        'getDataSourceForExchangeRates'
+      ).mockReturnValue(DataSource.YAHOO);
 
       const cashDetails: CashDetails = {
         accounts: [
@@ -374,24 +375,24 @@ describe('PortfolioService', () => {
         userId: userDummyData.id
       };
 
-      jest.spyOn(accountService, 'getCashDetails').mockResolvedValue({
+      vi.spyOn(accountService, 'getCashDetails').mockResolvedValue({
         accounts: [cashAccount],
         balanceInBaseCurrency: 1820
       });
 
-      jest
-        .spyOn(activitiesService, 'getActivitiesForPortfolioCalculator')
-        .mockResolvedValue({ activities: [], count: 0 });
+      vi.spyOn(
+        activitiesService,
+        'getActivitiesForPortfolioCalculator'
+      ).mockResolvedValue({ activities: [], count: 0 });
 
-      jest
-        .spyOn(dataProviderService, 'getDataSourceForExchangeRates')
-        .mockReturnValue(DataSource.YAHOO);
+      vi.spyOn(
+        dataProviderService,
+        'getDataSourceForExchangeRates'
+      ).mockReturnValue(DataSource.YAHOO);
 
-      jest
-        .spyOn(symbolProfileService, 'getSymbolProfiles')
-        .mockResolvedValue([]);
+      vi.spyOn(symbolProfileService, 'getSymbolProfiles').mockResolvedValue([]);
 
-      jest.spyOn(userService, 'user').mockResolvedValue({
+      vi.spyOn(userService, 'user').mockResolvedValue({
         accounts: [],
         activitiesCount: 0,
         dataProviderGhostfolioDailyRequests: 0,
@@ -434,38 +435,34 @@ describe('PortfolioService', () => {
         valueInBaseCurrency: new Big(1820)
       };
 
-      jest
-        .spyOn(portfolioCalculatorFactory, 'createCalculator')
-        .mockReturnValue({
-          getSnapshot: jest.fn().mockResolvedValue({
-            activitiesCount: 1,
-            createdAt: parseDate('2024-01-01'),
-            currentValueInBaseCurrency: new Big(1820),
-            errors: [],
-            hasErrors: false,
-            historicalData: [],
-            positions: [usdPosition],
-            totalFeesWithCurrencyEffect: new Big(0),
-            totalInterestWithCurrencyEffect: new Big(0),
-            totalInvestment: new Big(1820),
-            totalInvestmentWithCurrencyEffect: new Big(1820),
-            totalLiabilitiesWithCurrencyEffect: new Big(0)
-          })
-        } as unknown as ReturnType<
-          typeof portfolioCalculatorFactory.createCalculator
-        >);
+      vi.spyOn(portfolioCalculatorFactory, 'createCalculator').mockReturnValue({
+        getSnapshot: vi.fn().mockResolvedValue({
+          activitiesCount: 1,
+          createdAt: parseDate('2024-01-01'),
+          currentValueInBaseCurrency: new Big(1820),
+          errors: [],
+          hasErrors: false,
+          historicalData: [],
+          positions: [usdPosition],
+          totalFeesWithCurrencyEffect: new Big(0),
+          totalInterestWithCurrencyEffect: new Big(0),
+          totalInvestment: new Big(1820),
+          totalInvestmentWithCurrencyEffect: new Big(1820),
+          totalLiabilitiesWithCurrencyEffect: new Big(0)
+        })
+      } as unknown as ReturnType<
+        typeof portfolioCalculatorFactory.createCalculator
+      >);
 
-      jest
-        .spyOn(
-          portfolioService as unknown as {
-            getValueOfAccountsAndPlatforms: () => Promise<{
-              accounts: object;
-              platforms: object;
-            }>;
-          },
-          'getValueOfAccountsAndPlatforms'
-        )
-        .mockResolvedValue({ accounts: {}, platforms: {} });
+      vi.spyOn(
+        portfolioService as unknown as {
+          getValueOfAccountsAndPlatforms: () => Promise<{
+            accounts: object;
+            platforms: object;
+          }>;
+        },
+        'getValueOfAccountsAndPlatforms'
+      ).mockResolvedValue({ accounts: {}, platforms: {} });
     };
 
     it('should return cash holdings when the calculator emits cash positions with the exchange-rate data source', async () => {
@@ -576,7 +573,7 @@ describe('PortfolioService', () => {
     };
 
     beforeEach(() => {
-      jest.spyOn(portfolioService, 'getDetails').mockResolvedValue({
+      vi.spyOn(portfolioService, 'getDetails').mockResolvedValue({
         holdings: [activeHolding, closedHolding]
       } as unknown as Awaited<ReturnType<typeof portfolioService.getDetails>>);
     });
@@ -634,21 +631,17 @@ describe('PortfolioService', () => {
     } as Activity;
 
     beforeEach(() => {
-      jest.spyOn(userService, 'user').mockResolvedValue({
+      vi.spyOn(userService, 'user').mockResolvedValue({
         id: userDummyData.id,
         settings: { settings: { baseCurrency: 'USD' } }
       } as unknown as Awaited<ReturnType<typeof userService.user>>);
 
-      jest
-        .spyOn(symbolProfileService, 'getSymbolProfiles')
-        .mockResolvedValue([]);
+      vi.spyOn(symbolProfileService, 'getSymbolProfiles').mockResolvedValue([]);
 
-      jest
-        .spyOn(portfolioCalculatorFactory, 'createCalculator')
-        .mockReturnValue({
-          getSnapshot: jest.fn().mockResolvedValue({ positions: [] }),
-          getTransactionPoints: jest.fn().mockReturnValue([])
-        } as unknown as PortfolioCalculator);
+      vi.spyOn(portfolioCalculatorFactory, 'createCalculator').mockReturnValue({
+        getSnapshot: vi.fn().mockResolvedValue({ positions: [] }),
+        getTransactionPoints: vi.fn().mockReturnValue([])
+      } as unknown as PortfolioCalculator);
     });
 
     it('keeps the cached path when the holding has included and excluded activities', async () => {
@@ -656,7 +649,7 @@ describe('PortfolioService', () => {
         ...includedActivity,
         tags: [{ id: TAG_ID_EXCLUDE_FROM_ANALYSIS }]
       } as Activity;
-      const getActivities = jest
+      const getActivities = vi
         .spyOn(activitiesService, 'getActivitiesForPortfolioCalculator')
         .mockResolvedValueOnce({ activities: [includedActivity], count: 1 })
         .mockResolvedValue({
@@ -705,7 +698,7 @@ describe('PortfolioService', () => {
           tags
         } as Activity;
 
-        const getActivities = jest
+        const getActivities = vi
           .spyOn(activitiesService, 'getActivitiesForPortfolioCalculator')
           .mockResolvedValueOnce({ activities: [], count: 0 })
           .mockResolvedValueOnce({
@@ -746,7 +739,7 @@ describe('PortfolioService', () => {
     );
 
     it('does not load excluded activities by default', async () => {
-      const getActivities = jest
+      const getActivities = vi
         .spyOn(activitiesService, 'getActivitiesForPortfolioCalculator')
         .mockResolvedValue({ activities: [], count: 0 });
 
@@ -775,26 +768,27 @@ describe('PortfolioService', () => {
 
     function createPortfolioCalculator() {
       return {
-        getDividendInBaseCurrency: jest.fn().mockResolvedValue(new Big(0)),
-        getFeesInBaseCurrency: jest.fn().mockResolvedValue(new Big(0)),
-        getInterestInBaseCurrency: jest.fn().mockResolvedValue(new Big(0)),
-        getLiabilitiesInBaseCurrency: jest.fn().mockResolvedValue(new Big(0)),
-        getSnapshot: jest.fn().mockResolvedValue({
+        getDividendInBaseCurrency: vi.fn().mockResolvedValue(new Big(0)),
+        getFeesInBaseCurrency: vi.fn().mockResolvedValue(new Big(0)),
+        getInterestInBaseCurrency: vi.fn().mockResolvedValue(new Big(0)),
+        getLiabilitiesInBaseCurrency: vi.fn().mockResolvedValue(new Big(0)),
+        getSnapshot: vi.fn().mockResolvedValue({
           currentValueInBaseCurrency: new Big(3000),
           totalCashInBaseCurrency: new Big(1000),
           totalInvestment: new Big(2000),
           totalInvestmentWithCurrencyEffect: new Big(2000)
         }),
-        getStartDate: jest.fn().mockReturnValue(parseDate('2024-01-01'))
+        getStartDate: vi.fn().mockReturnValue(parseDate('2024-01-01'))
       } as unknown as PortfolioCalculator;
     }
 
     beforeEach(() => {
-      jest
-        .spyOn(activitiesService, 'getActivities')
-        .mockResolvedValue({ activities: [], count: 0 });
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+        activities: [],
+        count: 0
+      });
 
-      jest.spyOn(portfolioService, 'getPerformance').mockResolvedValue({
+      vi.spyOn(portfolioService, 'getPerformance').mockResolvedValue({
         performance: {
           currentValueInBaseCurrency: 3000,
           netPerformance: 500,
@@ -804,7 +798,7 @@ describe('PortfolioService', () => {
         }
       } as Awaited<ReturnType<typeof portfolioService.getPerformance>>);
 
-      jest.spyOn(userService, 'user').mockResolvedValue({
+      vi.spyOn(userService, 'user').mockResolvedValue({
         id: userDummyData.id,
         settings: {
           settings: {
@@ -815,7 +809,7 @@ describe('PortfolioService', () => {
     });
 
     it('should derive the cash and net worth from the account balance when there are no excluded accounts, no emergency fund and no liabilities', async () => {
-      jest.spyOn(accountService, 'getCashDetails').mockResolvedValue({
+      vi.spyOn(accountService, 'getCashDetails').mockResolvedValue({
         accounts: [],
         balanceInBaseCurrency: 1000
       });
@@ -864,17 +858,17 @@ describe('PortfolioService', () => {
     };
 
     beforeEach(() => {
-      jest
-        .spyOn(accountService, 'accounts')
-        .mockResolvedValue([account] as unknown as AccountWithBalance[]);
+      vi.spyOn(accountService, 'accounts').mockResolvedValue([
+        account
+      ] as unknown as AccountWithBalance[]);
 
-      jest
-        .spyOn(accountService, 'getAccounts')
-        .mockResolvedValue([account] as unknown as AccountWithBalance[]);
+      vi.spyOn(accountService, 'getAccounts').mockResolvedValue([
+        account
+      ] as unknown as AccountWithBalance[]);
 
-      jest
-        .spyOn(exchangeRateDataService, 'toCurrency')
-        .mockImplementation((aValue) => aValue);
+      vi.spyOn(exchangeRateDataService, 'toCurrency').mockImplementation(
+        (aValue) => aValue
+      );
     });
 
     it('should group activities without an account into the unknown bucket of accounts and platforms', async () => {
@@ -1026,7 +1020,7 @@ describe('PortfolioService', () => {
     });
 
     it('should only consider accounts of the current user if the activities are filtered by a single account', async () => {
-      const accountsSpy = jest.spyOn(accountService, 'accounts');
+      const accountsSpy = vi.spyOn(accountService, 'accounts');
 
       await getValueOfAccountsAndPlatforms({
         activities: [],
@@ -1070,7 +1064,7 @@ describe('PortfolioService', () => {
     it('should not accumulate rounding errors of the balances of accounts sharing a platform', async () => {
       const platformId = randomUUID();
 
-      jest.spyOn(accountService, 'getAccounts').mockResolvedValue([
+      vi.spyOn(accountService, 'getAccounts').mockResolvedValue([
         { ...account, platformId, balance: 0.1, id: randomUUID() },
         { ...account, platformId, balance: 0.2, id: randomUUID() }
       ] as unknown as AccountWithBalance[]);

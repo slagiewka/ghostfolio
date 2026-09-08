@@ -13,17 +13,18 @@ import { Activity, Filter } from '@ghostfolio/common/interfaces';
 
 import { AssetProfileSplit, DataSource } from '@prisma/client';
 import { Big } from 'big.js';
+import type { Mock } from 'vitest';
 
 import { ActivitiesService } from './activities.service';
 
 describe('ActivitiesService', () => {
   let activitiesService: ActivitiesService;
-  let getSplitsByUserId: jest.Mock;
-  let accountService: { getCashDetails: jest.Mock };
+  let getSplitsByUserId: Mock;
+  let accountService: { getCashDetails: Mock };
 
   beforeEach(() => {
-    getSplitsByUserId = jest.fn().mockResolvedValue([]);
-    accountService = { getCashDetails: jest.fn() };
+    getSplitsByUserId = vi.fn().mockResolvedValue([]);
+    accountService = { getCashDetails: vi.fn() };
 
     activitiesService = new ActivitiesService(
       null,
@@ -133,7 +134,7 @@ describe('ActivitiesService', () => {
       const activity = createActivity({ symbol: 'AAPL' });
       const split = createSplit('2021-01-01', 2, 1);
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [activity],
         count: 1
       });
@@ -189,7 +190,7 @@ describe('ActivitiesService', () => {
       const filters = [{ id: 'AAPL', type: 'SYMBOL' }] as Filter[];
       const split = createSplit();
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [activity],
         count: 1
       });
@@ -217,7 +218,7 @@ describe('ActivitiesService', () => {
     });
 
     it('includes excluded accounts and activities when requested', async () => {
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [],
         count: 0
       });
@@ -248,11 +249,11 @@ describe('ActivitiesService', () => {
       });
       const split = createSplit();
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [activity],
         count: 1
       });
-      jest.spyOn(activitiesService, 'getCashActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getCashActivities').mockResolvedValue({
         activities: [cashActivity],
         count: 1
       });
@@ -280,7 +281,7 @@ describe('ActivitiesService', () => {
       activity: Activity,
       splits: AssetProfileSplit[]
     ) {
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [activity],
         count: 1
       });

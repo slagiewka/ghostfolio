@@ -1,25 +1,27 @@
 import { parseDate } from '@ghostfolio/common/helper';
 
+import type { Mock } from 'vitest';
+
 import { MarketDataService } from './market-data.service';
 
 describe('MarketDataService', () => {
   let marketDataService: MarketDataService;
   let prismaService: {
-    $transaction: jest.Mock;
+    $transaction: Mock;
     marketData: {
-      createMany: jest.Mock;
-      deleteMany: jest.Mock;
-      upsert: jest.Mock;
+      createMany: Mock;
+      deleteMany: Mock;
+      upsert: Mock;
     };
   };
 
   beforeEach(() => {
     prismaService = {
-      $transaction: jest.fn(),
+      $transaction: vi.fn(),
       marketData: {
-        createMany: jest.fn(),
-        deleteMany: jest.fn(),
-        upsert: jest.fn().mockResolvedValue({})
+        createMany: vi.fn(),
+        deleteMany: vi.fn(),
+        upsert: vi.fn().mockResolvedValue({})
       }
     };
 

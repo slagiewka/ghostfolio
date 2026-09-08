@@ -14,7 +14,7 @@ describe('HasPermissionGuard', () => {
   });
 
   function setupReflectorSpy(returnValue: string) {
-    jest.spyOn(reflector, 'get').mockReturnValue(returnValue);
+    vi.spyOn(reflector, 'get').mockReturnValue(returnValue);
   }
 
   function createMockExecutionContext(permissions: string[]) {

@@ -2,11 +2,11 @@ import { CryptocurrencyService } from '@ghostfolio/api/services/cryptocurrency/c
 
 import { YahooFinanceDataEnhancerService } from './yahoo-finance.service';
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/cryptocurrency/cryptocurrency.service',
   () => {
     return {
-      CryptocurrencyService: jest.fn().mockImplementation(() => {
+      CryptocurrencyService: vi.fn().mockImplementation(function () {
         return {
           isCryptocurrency: (symbol: string) => {
             switch (symbol) {

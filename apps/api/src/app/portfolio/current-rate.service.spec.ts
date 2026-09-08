@@ -9,9 +9,9 @@ import { CurrentRateService } from './current-rate.service';
 import { DateQuery } from './interfaces/date-query.interface';
 import { GetValuesObject } from './interfaces/get-values-object.interface';
 
-jest.mock('@ghostfolio/api/services/market-data/market-data.service', () => {
+vi.mock('@ghostfolio/api/services/market-data/market-data.service', () => {
   return {
-    MarketDataService: jest.fn().mockImplementation(() => {
+    MarketDataService: vi.fn().mockImplementation(function () {
       return {
         get: (date: Date, symbol: string) => {
           return Promise.resolve<MarketData>({
@@ -69,11 +69,11 @@ jest.mock('@ghostfolio/api/services/market-data/market-data.service', () => {
   };
 });
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/exchange-rate-data/exchange-rate-data.service',
   () => {
     return {
-      ExchangeRateDataService: jest.fn().mockImplementation(() => {
+      ExchangeRateDataService: vi.fn().mockImplementation(function () {
         return {
           initialize: () => Promise.resolve(),
           toCurrency: (value: number) => {
@@ -86,9 +86,9 @@ jest.mock(
   }
 );
 
-jest.mock('@ghostfolio/api/services/property/property.service', () => {
+vi.mock('@ghostfolio/api/services/property/property.service', () => {
   return {
-    PropertyService: jest.fn().mockImplementation(() => {
+    PropertyService: vi.fn().mockImplementation(function () {
       return {
         getByKey: () => Promise.resolve({})
       };

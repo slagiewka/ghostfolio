@@ -1,3 +1,5 @@
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
+import '@analogjs/vitest-angular/setup-zone';
+import '@angular/compiler';
 
-setupZoneTestEnv();
+setupTestBed({ zoneless: false });

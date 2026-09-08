@@ -6,13 +6,14 @@ import {
 
 import { DataSource } from '@prisma/client';
 import { Job } from 'bull';
+import type { Mock } from 'vitest';
 
 import { DataGatheringProcessor } from './data-gathering.processor';
 
 describe('DataGatheringProcessor', () => {
   let dataGatheringProcessor: DataGatheringProcessor;
-  let dataProviderService: { getHistoricalRaw: jest.Mock };
-  let marketDataService: { replaceForSymbol: jest.Mock; updateMany: jest.Mock };
+  let dataProviderService: { getHistoricalRaw: Mock };
+  let marketDataService: { replaceForSymbol: Mock; updateMany: Mock };
 
   const createJob = ({
     dataSource,
@@ -58,14 +59,14 @@ describe('DataGatheringProcessor', () => {
   };
 
   beforeAll(() => {
-    jest.useFakeTimers().setSystemTime(parseDate('2026-08-24').getTime());
+    vi.useFakeTimers().setSystemTime(parseDate('2026-08-24').getTime());
   });
 
   beforeEach(() => {
-    dataProviderService = { getHistoricalRaw: jest.fn() };
+    dataProviderService = { getHistoricalRaw: vi.fn() };
     marketDataService = {
-      replaceForSymbol: jest.fn(),
-      updateMany: jest.fn()
+      replaceForSymbol: vi.fn(),
+      updateMany: vi.fn()
     };
 
     dataGatheringProcessor = new DataGatheringProcessor(
@@ -77,7 +78,7 @@ describe('DataGatheringProcessor', () => {
   });
 
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('writes an all-real series without carried forward market prices', async () => {

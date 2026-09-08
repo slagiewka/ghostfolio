@@ -1,19 +1,20 @@
 import { PrismaService } from '@ghostfolio/api/services/prisma/prisma.service';
 
 import { AssetProfileSplit, DataSource } from '@prisma/client';
+import type { Mock } from 'vitest';
 
 import { AssetProfileSplitService } from './asset-profile-split.service';
 
 describe('AssetProfileSplitService', () => {
   let assetProfileSplitService: AssetProfileSplitService;
-  let deleteMany: jest.Mock;
-  let findMany: jest.Mock;
-  let upsert: jest.Mock;
+  let deleteMany: Mock;
+  let findMany: Mock;
+  let upsert: Mock;
 
   beforeEach(() => {
-    deleteMany = jest.fn();
-    findMany = jest.fn();
-    upsert = jest.fn();
+    deleteMany = vi.fn();
+    findMany = vi.fn();
+    upsert = vi.fn();
 
     assetProfileSplitService = new AssetProfileSplitService({
       assetProfileSplit: { deleteMany, findMany, upsert }

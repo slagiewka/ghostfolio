@@ -24,8 +24,6 @@ RUN npm install
 
 COPY ./apps apps/
 COPY ./libs libs/
-COPY ./jest.config.ts jest.config.ts
-COPY ./jest.preset.js jest.preset.js
 COPY ./nx.json nx.json
 COPY ./replace.build.mjs replace.build.mjs
 COPY ./tsconfig.base.json tsconfig.base.json

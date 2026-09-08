@@ -14,45 +14,50 @@ import { PortfolioTableService } from './portfolio-table.service';
 
 /**
  * The markdown table is rendered by a package which ships as an ECMAScript
- * module only, which Jest cannot run. The mock keeps the mapping of the
- * columns and of the rows and writes them in the same shape as the renderer
+ * module only. The mock keeps the mapping of the columns and of the rows and
+ * writes them in the same shape as the renderer.
  */
-jest.mock('@ghostfolio/api/helper/markdown-table.helper', () => {
-  const { getTableInput } = jest.requireActual<
-    typeof import('@ghostfolio/api/helper/markdown-table.helper')
-  >('@ghostfolio/api/helper/markdown-table.helper');
+vi.mock(
+  '@ghostfolio/api/helper/markdown-table.helper',
+  async (importOriginal) => {
+    const original =
+      await importOriginal<
+        typeof import('@ghostfolio/api/helper/markdown-table.helper')
+      >();
+    const { getTableInput } = original;
 
-  return {
-    getTableInput,
-    getMarkdownTable: jest.fn(
-      (parameters: TableParameters<unknown, unknown>) => {
-        const { columns, rows } = getTableInput(parameters);
+    return {
+      ...original,
+      getMarkdownTable: vi.fn(
+        (parameters: TableParameters<unknown, unknown>) => {
+          const { columns, rows } = getTableInput(parameters);
 
-        const names = columns.map(({ name }) => {
-          return name;
-        });
+          const names = columns.map(({ name }) => {
+            return name;
+          });
 
-        return Promise.resolve(
-          [
-            names,
-            names.map(() => {
-              return '---';
-            }),
-            ...rows.map((row) => {
-              return names.map((name) => {
-                return row[name];
-              });
-            })
-          ]
-            .map((cells) => {
-              return `| ${cells.join(' | ')} |`;
-            })
-            .join('\n')
-        );
-      }
-    )
-  };
-});
+          return Promise.resolve(
+            [
+              names,
+              names.map(() => {
+                return '---';
+              }),
+              ...rows.map((row) => {
+                return names.map((name) => {
+                  return row[name];
+                });
+              })
+            ]
+              .map((cells) => {
+                return `| ${cells.join(' | ')} |`;
+              })
+              .join('\n')
+          );
+        }
+      )
+    };
+  }
+);
 
 function createAccount({
   id = 'account-a-id',
@@ -115,14 +120,14 @@ function createPortfolioTableService({
   // The mock gives the identifier of the translation, so that a test can tell
   // the translation of the asset class from that of the asset sub class
   const i18nService = {
-    getTranslation: jest.fn(({ id }: { id: string }) => {
+    getTranslation: vi.fn(({ id }: { id: string }) => {
       return `translation of ${id}`;
     })
   } as unknown as I18nService;
 
   const portfolioService = {
-    getAccountsWithAggregations: jest.fn().mockResolvedValue({ accounts }),
-    getDetails: jest.fn().mockResolvedValue({ holdings })
+    getAccountsWithAggregations: vi.fn().mockResolvedValue({ accounts }),
+    getDetails: vi.fn().mockResolvedValue({ holdings })
   } as unknown as PortfolioService;
 
   return new PortfolioTableService(null, i18nService, portfolioService);

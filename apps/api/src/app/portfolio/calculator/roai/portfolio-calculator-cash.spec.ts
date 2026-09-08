@@ -27,39 +27,39 @@ import { Big } from 'big.js';
 import { eachDayOfInterval } from 'date-fns';
 import { randomUUID } from 'node:crypto';
 
-jest.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
+vi.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
   return {
-    CurrentRateService: jest.fn().mockImplementation(() => {
+    CurrentRateService: vi.fn().mockImplementation(function () {
       return CurrentRateServiceMock;
     })
   };
 });
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/exchange-rate-data/exchange-rate-data.service',
   () => {
     return {
-      ExchangeRateDataService: jest.fn().mockImplementation(() => {
+      ExchangeRateDataService: vi.fn().mockImplementation(function () {
         return ExchangeRateDataServiceMock;
       })
     };
   }
 );
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/queues/portfolio-snapshot/portfolio-snapshot.service',
   () => {
     return {
-      PortfolioSnapshotService: jest.fn().mockImplementation(() => {
+      PortfolioSnapshotService: vi.fn().mockImplementation(function () {
         return PortfolioSnapshotServiceMock;
       })
     };
   }
 );
 
-jest.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
+vi.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
   return {
-    RedisCacheService: jest.fn().mockImplementation(() => {
+    RedisCacheService: vi.fn().mockImplementation(function () {
       return RedisCacheServiceMock;
     })
   };
@@ -126,7 +126,7 @@ describe('PortfolioCalculator', () => {
       accountBalanceService,
       accountService,
       {
-        getSplitsByUserId: jest.fn().mockResolvedValue([])
+        getSplitsByUserId: vi.fn().mockResolvedValue([])
       } as unknown as AssetProfileSplitService,
       null,
       null,
@@ -152,40 +152,38 @@ describe('PortfolioCalculator', () => {
 
   describe('Cash Performance', () => {
     it('should calculate performance for cash assets in CHF default currency', async () => {
-      jest.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
+      vi.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
 
       const accountId = randomUUID();
 
-      jest
-        .spyOn(accountBalanceService, 'getAccountBalances')
-        .mockResolvedValue({
-          balances: [
-            {
-              accountId,
-              date: parseDate('2023-12-31'),
-              id: randomUUID(),
-              value: 1000,
-              valueInBaseCurrency: 850
-            },
-            {
-              accountId,
-              date: parseDate('2024-12-31'),
-              id: randomUUID(),
-              value: 2000,
-              valueInBaseCurrency: 1800
-            },
-            {
-              // Ignored future account balance
-              accountId,
-              date: parseDate('2050-12-31'),
-              id: randomUUID(),
-              value: 0,
-              valueInBaseCurrency: 0
-            }
-          ]
-        });
+      vi.spyOn(accountBalanceService, 'getAccountBalances').mockResolvedValue({
+        balances: [
+          {
+            accountId,
+            date: parseDate('2023-12-31'),
+            id: randomUUID(),
+            value: 1000,
+            valueInBaseCurrency: 850
+          },
+          {
+            accountId,
+            date: parseDate('2024-12-31'),
+            id: randomUUID(),
+            value: 2000,
+            valueInBaseCurrency: 1800
+          },
+          {
+            // Ignored future account balance
+            accountId,
+            date: parseDate('2050-12-31'),
+            id: randomUUID(),
+            value: 0,
+            valueInBaseCurrency: 0
+          }
+        ]
+      });
 
-      jest.spyOn(accountService, 'getCashDetails').mockResolvedValue({
+      vi.spyOn(accountService, 'getCashDetails').mockResolvedValue({
         accounts: [
           {
             balance: 2000,
@@ -202,11 +200,12 @@ describe('PortfolioCalculator', () => {
         balanceInBaseCurrency: 1820
       });
 
-      jest
-        .spyOn(dataProviderService, 'getDataSourceForExchangeRates')
-        .mockReturnValue(DataSource.YAHOO);
+      vi.spyOn(
+        dataProviderService,
+        'getDataSourceForExchangeRates'
+      ).mockReturnValue(DataSource.YAHOO);
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [],
         count: 0
       });
@@ -218,7 +217,7 @@ describe('PortfolioCalculator', () => {
           withCash: true
         });
 
-      jest.spyOn(currentRateService, 'getValues').mockResolvedValue({
+      vi.spyOn(currentRateService, 'getValues').mockResolvedValue({
         dataProviderInfos: [],
         errors: [],
         values: []
@@ -335,32 +334,30 @@ describe('PortfolioCalculator', () => {
     });
 
     it('should exclude cash in the base currency from the performance calculation', async () => {
-      jest.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
+      vi.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
 
       const accountId = randomUUID();
 
-      jest
-        .spyOn(accountBalanceService, 'getAccountBalances')
-        .mockResolvedValue({
-          balances: [
-            {
-              accountId,
-              date: parseDate('2023-12-31'),
-              id: randomUUID(),
-              value: 1000,
-              valueInBaseCurrency: 1000
-            },
-            {
-              accountId,
-              date: parseDate('2024-12-31'),
-              id: randomUUID(),
-              value: 2000,
-              valueInBaseCurrency: 2000
-            }
-          ]
-        });
+      vi.spyOn(accountBalanceService, 'getAccountBalances').mockResolvedValue({
+        balances: [
+          {
+            accountId,
+            date: parseDate('2023-12-31'),
+            id: randomUUID(),
+            value: 1000,
+            valueInBaseCurrency: 1000
+          },
+          {
+            accountId,
+            date: parseDate('2024-12-31'),
+            id: randomUUID(),
+            value: 2000,
+            valueInBaseCurrency: 2000
+          }
+        ]
+      });
 
-      jest.spyOn(accountService, 'getCashDetails').mockResolvedValue({
+      vi.spyOn(accountService, 'getCashDetails').mockResolvedValue({
         accounts: [
           {
             balance: 2000,
@@ -377,11 +374,12 @@ describe('PortfolioCalculator', () => {
         balanceInBaseCurrency: 2000
       });
 
-      jest
-        .spyOn(dataProviderService, 'getDataSourceForExchangeRates')
-        .mockReturnValue(DataSource.YAHOO);
+      vi.spyOn(
+        dataProviderService,
+        'getDataSourceForExchangeRates'
+      ).mockReturnValue(DataSource.YAHOO);
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [],
         count: 0
       });
@@ -393,7 +391,7 @@ describe('PortfolioCalculator', () => {
           withCash: true
         });
 
-      jest.spyOn(currentRateService, 'getValues').mockResolvedValue({
+      vi.spyOn(currentRateService, 'getValues').mockResolvedValue({
         dataProviderInfos: [],
         errors: [],
         values: []
@@ -473,25 +471,23 @@ describe('PortfolioCalculator', () => {
     });
 
     it('should add cash in the base currency to the net worth of a portfolio with holdings', async () => {
-      jest.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
+      vi.useFakeTimers().setSystemTime(parseDate('2025-01-01').getTime());
 
       const accountId = randomUUID();
 
-      jest
-        .spyOn(accountBalanceService, 'getAccountBalances')
-        .mockResolvedValue({
-          balances: [
-            {
-              accountId,
-              date: parseDate('2023-12-31'),
-              id: randomUUID(),
-              value: 2000,
-              valueInBaseCurrency: 2000
-            }
-          ]
-        });
+      vi.spyOn(accountBalanceService, 'getAccountBalances').mockResolvedValue({
+        balances: [
+          {
+            accountId,
+            date: parseDate('2023-12-31'),
+            id: randomUUID(),
+            value: 2000,
+            valueInBaseCurrency: 2000
+          }
+        ]
+      });
 
-      jest.spyOn(accountService, 'getCashDetails').mockResolvedValue({
+      vi.spyOn(accountService, 'getCashDetails').mockResolvedValue({
         accounts: [
           {
             balance: 2000,
@@ -508,11 +504,12 @@ describe('PortfolioCalculator', () => {
         balanceInBaseCurrency: 2000
       });
 
-      jest
-        .spyOn(dataProviderService, 'getDataSourceForExchangeRates')
-        .mockReturnValue(DataSource.YAHOO);
+      vi.spyOn(
+        dataProviderService,
+        'getDataSourceForExchangeRates'
+      ).mockReturnValue(DataSource.YAHOO);
 
-      jest.spyOn(activitiesService, 'getActivities').mockResolvedValue({
+      vi.spyOn(activitiesService, 'getActivities').mockResolvedValue({
         activities: [
           {
             ...activityDummyData,
@@ -543,9 +540,8 @@ describe('PortfolioCalculator', () => {
 
       // The cash symbol has no market data, the holding is quoted at a
       // constant price so that it does not generate any performance on its own
-      jest
-        .spyOn(currentRateService, 'getValues')
-        .mockImplementation(({ dataGatheringItems, dateQuery }) => {
+      vi.spyOn(currentRateService, 'getValues').mockImplementation(
+        ({ dataGatheringItems, dateQuery }) => {
           const values = [];
 
           for (const date of eachDayOfInterval({
@@ -564,7 +560,8 @@ describe('PortfolioCalculator', () => {
             dataProviderInfos: [],
             errors: []
           });
-        });
+        }
+      );
 
       const accountBalanceItems =
         await accountBalanceService.getAccountBalanceItems({

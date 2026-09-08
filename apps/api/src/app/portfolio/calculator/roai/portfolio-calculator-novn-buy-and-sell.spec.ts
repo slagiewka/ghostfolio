@@ -20,28 +20,28 @@ import { PerformanceCalculationType } from '@ghostfolio/common/types/performance
 import { Big } from 'big.js';
 import { join } from 'node:path';
 
-jest.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
+vi.mock('@ghostfolio/api/app/portfolio/current-rate.service', () => {
   return {
-    CurrentRateService: jest.fn().mockImplementation(() => {
+    CurrentRateService: vi.fn().mockImplementation(function () {
       return CurrentRateServiceMock;
     })
   };
 });
 
-jest.mock(
+vi.mock(
   '@ghostfolio/api/services/queues/portfolio-snapshot/portfolio-snapshot.service',
   () => {
     return {
-      PortfolioSnapshotService: jest.fn().mockImplementation(() => {
+      PortfolioSnapshotService: vi.fn().mockImplementation(function () {
         return PortfolioSnapshotServiceMock;
       })
     };
   }
 );
 
-jest.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
+vi.mock('@ghostfolio/api/app/redis-cache/redis-cache.service', () => {
   return {
-    RedisCacheService: jest.fn().mockImplementation(() => {
+    RedisCacheService: vi.fn().mockImplementation(function () {
       return RedisCacheServiceMock;
     })
   };
@@ -96,7 +96,7 @@ describe('PortfolioCalculator', () => {
 
   describe('get current positions', () => {
     it.only('with NOVN.SW buy and sell', async () => {
-      jest.useFakeTimers().setSystemTime(parseDate('2022-04-11').getTime());
+      vi.useFakeTimers().setSystemTime(parseDate('2022-04-11').getTime());
 
       const activities: Activity[] = exportResponse.activities.map(
         (activity) => ({

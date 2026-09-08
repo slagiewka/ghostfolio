@@ -38,11 +38,11 @@ describe('Impersonation service', () => {
     impersonatedUser?: unknown;
     isSubscriptionEnabled?: boolean;
   } = {}) {
-    const getSubscription = jest.fn().mockResolvedValue({
+    const getSubscription = vi.fn().mockResolvedValue({
       type: SubscriptionType.Basic
     });
 
-    const updateAccess = jest.fn().mockResolvedValue(undefined);
+    const updateAccess = vi.fn().mockResolvedValue(undefined);
 
     const configurationService = {
       get: (key: string) => {

@@ -9,7 +9,7 @@
       ],
       "console": "internalConsole",
       "cwd": "${workspaceFolder}",
-      "name": "Debug Jest",
+      "name": "Debug Vitest",
       "program": "${workspaceFolder}/node_modules/@nrwl/cli/bin/nx",
       "request": "launch",
       "type": "node"

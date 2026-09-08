@@ -6,10 +6,11 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { vi } from 'vitest';
 
 import { GfHistoricalMarketDataEditorComponent } from './historical-market-data-editor.component';
 
-jest.mock(
+vi.mock(
   './historical-market-data-editor-dialog/historical-market-data-editor-dialog.component',
   () => ({
     GfHistoricalMarketDataEditorDialogComponent: class {}

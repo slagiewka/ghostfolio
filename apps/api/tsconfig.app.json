@@ -7,6 +7,6 @@
     "target": "es2021",
     "module": "preserve"
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "vitest.config.ts"],
   "include": ["**/*.ts"]
 }
